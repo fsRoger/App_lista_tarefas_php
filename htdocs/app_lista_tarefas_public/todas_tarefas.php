@@ -3,9 +3,6 @@
 	$acao = 'recuperar';
 	require 'tarefa_controller.php';
 
-	echo '<pre>';
-	print_r($tarefas);
-	echo '</pre>';
 ?>
 
 <html>
@@ -17,11 +14,12 @@
 		<link rel="stylesheet" href="css/estilo.css">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
 	<script>
 		function editar(id, txt_tarefa){
 			//criar um form de edicao
 			let form = document.createElement('form')
-			form.action ='#'
+			form.action ='tarefa_controller.php?acao=atualizar'
 			form.method ='post'
 			form.className = 'row'
 
@@ -30,6 +28,12 @@
 			inputTarefa.type = 'text'
 			inputTarefa.name = 'tarefa'
 			inputTarefa.className = 'col-9 form-control'
+			inputTarefa.value = txt_tarefa
+
+			let inputId = document.createElement('input')
+			inputId.type = 'hidden'
+			inputId.name = 'id'
+			inputId.value = id
 
 			//criar um button de envio do form
 			let button = document.createElement('button')
@@ -40,19 +44,28 @@
 			//incluir input tarefa no form
 			form.appendChild(inputTarefa)
 
+			form.appendChild(inputId)
+
 			//incluir button tarefa no form
 			form.appendChild(button)
 
-			//selecionar div $tarefa
-			let tarefa = document.getElementById('tarefa_'+id)
+			//selecionar div tarefa
+			let tarefa = document.getElementById("tarefa_"+id)
 
 			//limpar o texto da tarefa para inclusao do form
-			tarefa.innerHTML= ''
+			tarefa.innerHTML = ''
 
 			//incluir form na pagina
-			tarefa.insertBefore(form, tarefa[0])
+			tarefa.insertBefore(form, tarefa.childNodes[0])
 
-			alert(txt_tarefa)
+		}
+
+		function remover(id){
+			location.href= "todas_tarefas.php?acao=remover&id="+id;
+		}
+
+		function marcarRealizada(id) {
+			location.href= "todas_tarefas.php?acao=marcarRealizada&id="+id;
 		}
 	</script>
 	
@@ -88,16 +101,18 @@
 								<h4>Todas tarefas</h4>
 								<hr />
 
-								<? foreach($tarefas as $indice => $tarefa) { ?>
+								<?php foreach($tarefas as $indice => $tarefa) { ?>
 									<div class="row mb-3 d-flex align-items-center tarefa">
-										<div class="col-sm-9" id="tarefa_<?= $tarefa->id ?>"><?= $tarefa->tarefa ?> (<?= $tarefa->status?>)</div>
+										<div class="col-sm-9" id="tarefa_<?php echo $tarefa->id ?>"><?php echo $tarefa->tarefa ?> (<?php echo $tarefa->status?>)</div>
 										<div class="col-sm-3 mt-2 d-flex justify-content-between">
-											<i class="fas fa-trash-alt fa-lg text-danger"></i>
-											<i class="fas fa-edit fa-lg text-info" onclick="editar(<?= $tarefa->id ?>)"></i>
-											<i class="fas fa-check-square fa-lg text-success"></i>
+											<i class="fas fa-trash-alt fa-lg text-danger" onclick="remover(<?php echo $tarefa->id ?>)"></i>
+											<?php if($tarefa->status == 'pendente' ) { ?>
+												<i class="fas fa-edit fa-lg text-info" onclick="editar(<?php echo $tarefa->id ?>, '<?php echo $tarefa->tarefa ?>')"></i>
+												<i class="fas fa-check-square fa-lg text-success" onclick="marcarRealizada(<?php echo $tarefa->id ?>)"></i>
+											<?php } ?>
 										</div>
 									</div>
-								<?} ?>
+								<?php } ?>
 								
 							</div>
 						</div>

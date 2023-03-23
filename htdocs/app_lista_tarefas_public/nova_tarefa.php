@@ -18,11 +18,11 @@
 				</a>
 			</div>
 		</nav>
-		<? if(isset($_GET['inclusao']) && $_GET['inclusao'] == 1) {?>
+		<?php if(isset($_GET['inclusao']) && $_GET['inclusao'] == 1) {?>
 			<div class="bg-success pt-2 text-white d-flex justify-content-center">
 				<h5>tarefa incluida com sucesso</h5>
 			</div>
-		<? } ?>
+		<?php } ?>
 		
 
 		<div class="container app">
